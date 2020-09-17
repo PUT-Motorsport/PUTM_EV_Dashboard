@@ -1,5 +1,6 @@
 from graphics import *
 from layout_rework import *
+from math import floor
 
 class temp_box:
 	def __init__(self,x,y,w,h,font_size,text_str,win):
@@ -58,6 +59,8 @@ class temp_box:
 class fill_box:
 	def __init__(self,x,y,w,h,font_size,text_str,win):
 		self.h = h
+		self.y=y
+		self.w=w
 		self.left_point = Point(x,y)
 		self.right_point = Point(x+w,y+h)
 		self.fill_left_point = Point(x+1,y+1)
@@ -73,20 +76,27 @@ class fill_box:
 		self.win = win
 		self.top_value = None
 		self.value = None
-		self.filler = Rectangle(self.fill_left_point,self.fill_right_point)
+		#self.filler = Rectangle(self.fill_left_point,self.fill_right_point)
+		self.fillers = []
+		for i in range(50):
+			self.fillers.append(Rectangle(Point(self.left_point.getX(),self.y+(self.h/50)*i),Point(self.left_point.getX()+self.w,self.y+(self.h/50)*(i+1))))
+			self.fillers[i].setFill("green")
+			self.fillers[i].setOutline("green")
+			self.fillers[i].draw(win)
 		self.value_text = Text(Point(x+w/2,y+h-15),self.value)
 		self.value_text.setTextColor("white")
 		self.value_text.setFace("helvetica")
 		self.value_text.setSize(font_size+2)
 		self.value_text.setStyle("bold")
+		self.last_undrawn = None
 	def draw_components(self):
-		self.filler.draw(self.win)
+		#self.filler.draw(self.win)
 		self.box.draw(self.win)
 		self.text.draw(self.win)
 		self.value_text.draw(self.win)
 	def undraw_components(self):
 		self.box.undraw()
-		self.filler.undraw()
+		#self.filler.undraw()
 		self.text.undraw()
 		self.value_text.undraw()
 	def move_components(self,x,y):
@@ -100,28 +110,47 @@ class fill_box:
 		self.text.draw(self.win)
 		self.value_text.draw(self.win)
 	def update_filler(self,x):
-		self.value = (x/self.top_value)
-		px_delta = abs(self.filler.getP1().getY()-self.fill_left_point.getY() - (self.h*(1-self.value)))
-		if px_delta >= 1:
-			self.filler.undraw()
-			self.filler = Rectangle(Point(self.fill_left_point.getX(),
-				self.fill_left_point.getY()+(self.h*(1-self.value))),
-					self.fill_right_point)
-			self.filler.draw(self.win)
-			self.redraw_text()
-	def color_picker(self):
-		if self.value is not None:
-			if self.value > 0.5:
-				self.filler.setFill(color_rgb(0,100,0))
-			elif self.value <= 0.5 and self.value > 0.2:
-				self.filler.setFill("orange")
+		if self.value is None:
+			self.value = x
+		temp = (x/self.top_value)
+		delta = temp-(self.value/self.top_value)
+		print(delta)
+		if delta <= -0.02:
+			print("abs: ",floor(delta/(-0.02)))
+			i=0
+			if self.last_undrawn is not None:
+				for i in range(floor(delta/(-0.02))):
+					self.fillers[self.last_undrawn+i].undraw()
+				self.last_undrawn += floor(delta/(-0.02))
 			else:
-				self.filler.setFill("red")
+				for i in range(floor(delta/(-0.02))):
+					self.fillers[i].undraw()
+				self.last_undrawn = floor(delta/(-0.02))
+			print("last: ", self.last_undrawn)
+			self.value = x
+		#px_delta = abs(self.filler.getP1().getY()-self.fill_left_point.getY() - (self.h*(1-self.value)))
+		#if px_delta >= 1:
+		#	self.filler.undraw()
+		#	self.filler = Rectangle(Point(self.fill_left_point.getX(),
+		#		self.fill_left_point.getY()+(self.h*(1-self.value))),
+		#			self.fill_right_point)
+		#	self.filler.draw(self.win)
+		#	self.redraw_text()
+	def color_picker(self):
+		pass
+		#if self.value is not None:
+		#	if self.value > 0.5:
+		#		self.filler.setFill(color_rgb(0,100,0))
+		#	elif self.value <= 0.5 and self.value > 0.2:
+		#		self.filler.setFill("orange")
+		#	else:
+		#		self.filler.setFill("red")
 class rev:
 	def __init__(self):
 		self.rev_origin_point = Point(10,30)
-		self.revs_value = 100
+		self.revs_value = 10000
 		self.max_revs = 10000 #for now
+		self.drawn_labels = 99
 		self.rev_label_num = 5
 		self.rev_labels = [Text(Point(10+(i*460/self.rev_label_num),10),str(int(i*self.max_revs/self.rev_label_num/1000))) for i in range(self.rev_label_num+1)]
 		self.rev_lines = [Line(Point(10+(i*460/self.rev_label_num),18),Point(10+(i*460/self.rev_label_num),30)) for i in range(self.rev_label_num+1)]
@@ -131,16 +160,34 @@ class rev:
 		for i in self.rev_lines:
 			i.setFill("white")
 			i.draw(win)
-		self.rev_box = Rectangle(self.rev_origin_point,Point(10+460*self.revs_value/self.max_revs,50))
-		self.rev_box.setFill("white")
-		self.rev_box.setOutline("white")
-		self.rev_box.draw(win)
+		#self.rev_box = Rectangle(self.rev_origin_point,Point(10+460*self.revs_value/self.max_revs,50))
+		#self.rev_box.setFill("white")
+		#self.rev_box.setOutline("white")
+		#self.rev_box.draw(win)
+		self.rev_boxes = []
+		for i in range(99):
+			self.rev_boxes.append(Rectangle(Point(self.rev_origin_point.getX()+10+4.6*i,self.rev_origin_point.getY()),Point(10+4.6*i,self.rev_origin_point.getY()+30)))
+			self.rev_boxes[i].setFill("white")
+			self.rev_boxes[i].setOutline("white")
+			self.rev_boxes[i].draw(win)
 	def update_revs(self):
-		self.rev_box.undraw()
-		self.rev_box = Rectangle(self.rev_origin_point,Point(10+460*self.revs_value/self.max_revs,50))
-		self.rev_box.setFill("white")
-		self.rev_box.setOutline("white")
-		self.rev_box.draw(win)
+		max_i = int((self.revs_value/self.max_revs) * 99)
+		if max_i > self.drawn_labels:
+			for i in range(self.drawn_labels,max_i):
+				self.rev_boxes[i].draw(win)
+				#print(i,max_i)
+		else:
+			#for i in range(max_i,self.drawn_labels):
+			#	self.rev_boxes[i].undraw()
+			for i in range(max_i,self.drawn_labels):
+				self.rev_boxes[(self.drawn_labels-1)-i+max_i].undraw()
+				#print(i,max_i)
+		self.drawn_labels = max_i
+		#self.rev_box.undraw()
+		#self.rev_box = Rectangle(self.rev_origin_point,Point(10+460*self.revs_value/self.max_revs,50))
+		#self.rev_box.setFill("white")
+		#self.rev_box.setOutline("white")
+		#self.rev_box.draw(win)
 
 class speed:
 	def __init__(self,x,y,w,h,speed_value,win):
@@ -241,7 +288,7 @@ alert_text.setSize(24)
 alert_text.draw(win)
 
 #Revs
-revs = rev()
+#revs = rev()
 
 #speed
 speedo = speed(240-(110/2),65,200,135,300,win)
