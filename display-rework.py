@@ -14,8 +14,6 @@ from seven import *
 import os
 import errno
 
-framerate = 10
-
 mode_components = []
 for i in range(3):
 	mode_components.append([])
@@ -35,7 +33,7 @@ def main_loop(win):
 	mode = 0
 	current_mode = 0
 	win.setBackground("black")
-	max_frame_time = (1/framerate)
+	#max_frame_time = (1/framerate)
 
 	mode_components[current_mode].append(water1_temp_box)
 	mode_components[current_mode].append(water2_temp_box)
@@ -74,9 +72,8 @@ def main_loop(win):
 			#testing values
 			frame_counter+=1
 			water1_temp_box.value = frame_counter
-			revs.revs_value = (frame_counter*100)%10000
-			revs.update_revs()
-			
+			#revs.revs_value = (frame_counter*2500)%10000
+			#revs.update_revs()
 			if frame_counter%20==1:
 				flag = not flag
 				if not flag:
@@ -89,16 +86,16 @@ def main_loop(win):
 			for i in mode_components[current_mode]:
 				if getattr(i,"update_filler",None):
 					i.update_filler(1000-frame_counter)
-					i.value_text.setText(str(round(i.value*100,2)))
+					i.value_text.setText(str(round(i.value/i.top_value*100,2)))
 				i.color_picker()
 				if getattr(i,"check_warn",None):
 					i.check_warn()
 					i.value_text.setText(str(i.value))
-			end_frame_time = time.time()
-			frame_time = (end_frame_time-start_frame_time)
-			if frame_time > max_frame_time:
-				print("OVERLOAD DETECTED! FRAMERATE IS TOO BIG!")
-			sleep(max_frame_time-frame_time if max_frame_time-frame_time > 0 else 1e-8)
+			#end_frame_time = time.time()
+			#frame_time = (end_frame_time-start_frame_time)
+			#if frame_time > max_frame_time:
+			#	print("OVERLOAD DETECTED! FRAMERATE IS TOO BIG!")
+			#sleep(max_frame_time-frame_time if max_frame_time-frame_time > 0 else 1e-8)
 		except GraphicsError as error:
 			raise
 			exit(0)
