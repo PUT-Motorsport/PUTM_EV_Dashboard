@@ -27,7 +27,7 @@ def draw_mode(mode_components):
 	for i in mode_components:
 		i.draw_components()
 
-def main_loop(win):
+def main_loop(win,fifo):
 	#setup
 	frame_counter = 0
 	mode = 0
@@ -53,6 +53,9 @@ def main_loop(win):
 	mode_components[1].append(water1_temp_box)
 	#loop
 	while(True):
+		for line in fifo:
+			if line.split(" ")[0]=="LVT":
+				lv_battery_temp_box.value = int(line.split(" ")[1])
 		try:
 			start_frame_time = time.time()
 			click = win.checkMouse()
@@ -101,4 +104,12 @@ def main_loop(win):
 			exit(0)
 
 if __name__=="__main__":
-	main_loop(win)
+	FIFO = "test_pipe"
+	try:
+		os.mkfifo(FIFO)
+	except OSError as oe: 
+		if oe.errno != errno.EEXIST:
+			raise
+	with open(FIFO) as fifo:
+		
+		main_loop(win,fifo)

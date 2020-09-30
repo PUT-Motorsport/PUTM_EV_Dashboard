@@ -114,9 +114,9 @@ class fill_box:
 			self.value = x
 		temp = (x/self.top_value)
 		delta = temp-(self.value/self.top_value)
-		print(delta)
+		#print(delta)
 		if delta <= -0.02:
-			print("abs: ",floor(delta/(-0.02)))
+			#print("abs: ",floor(delta/(-0.02)))
 			i=0
 			if self.last_undrawn is not None:
 				for i in range(floor(delta/(-0.02))):
@@ -126,7 +126,7 @@ class fill_box:
 				for i in range(floor(delta/(-0.02))):
 					self.fillers[i].undraw()
 				self.last_undrawn = floor(delta/(-0.02))
-			print("last: ", self.last_undrawn)
+			#print("last: ", self.last_undrawn)
 			self.value = x
 		#px_delta = abs(self.filler.getP1().getY()-self.fill_left_point.getY() - (self.h*(1-self.value)))
 		#if px_delta >= 1:
