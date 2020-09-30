@@ -46,16 +46,16 @@ def main_loop(win,fifo):
 	mode_components[current_mode].append(hv_battery_rms_box)
 	mode_components[current_mode].append(motor_temp_box)
 
-	test_num = number(220,77,72,win)
-	test_num2 = number(290,77,72,win)
+	test_num = number(180-10,68,72,win)
+	test_num2 = number(257-10,68,72,win)
 	flag = True
 
 	mode_components[1].append(water1_temp_box)
 	#loop
 	while(True):
-		for line in fifo:
-			if line.split(" ")[0]=="LVT":
-				lv_battery_temp_box.value = int(line.split(" ")[1])
+		#for line in fifo:
+		#	if line.split(" ")[0]=="LVT":
+		#		lv_battery_temp_box.value = int(line.split(" ")[1])
 		try:
 			start_frame_time = time.time()
 			click = win.checkMouse()
@@ -99,6 +99,7 @@ def main_loop(win,fifo):
 			#if frame_time > max_frame_time:
 			#	print("OVERLOAD DETECTED! FRAMERATE IS TOO BIG!")
 			#sleep(max_frame_time-frame_time if max_frame_time-frame_time > 0 else 1e-8)
+			#input()
 		except GraphicsError as error:
 			raise
 			exit(0)
@@ -110,6 +111,6 @@ if __name__=="__main__":
 	except OSError as oe: 
 		if oe.errno != errno.EEXIST:
 			raise
-	with open(FIFO) as fifo:
+	#with open(FIFO) as fifo:
 		
-		main_loop(win,fifo)
+	main_loop(win,FIFO)
