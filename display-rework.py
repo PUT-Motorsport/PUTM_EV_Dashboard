@@ -62,10 +62,11 @@ def main_loop(win):
 			start_frame_time = time.time()
 
 			#unwrap can table
-			 water1_temp_box.value,water2_temp_box.value= argtab
+			water1_temp_box.value = argtab[0]
+			water2_temp_box.value = argtab[1]
 			#click = win.checkMouse()
 			#if click is not None:
-				mode = (mode + 1) % 2
+			#mode = (mode + 1) % 2
 			if mode == 0 and current_mode != 0:
 				undraw_mode(mode_components[current_mode])
 				water1_temp_box.move_components(-100,-100)
