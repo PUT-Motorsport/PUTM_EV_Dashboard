@@ -6,19 +6,18 @@ from time import time as time
 
 from graphics import *
 from layout_rework import *
-
 from boxes import *
-
 from seven import *
+from vcan import*
 
 import os
 import errno
+import threading
+from copy import copy
 
 mode_components = []
 for i in range(3):
 	mode_components.append([])
-
-
 
 def undraw_mode(mode_components):
 	for i in mode_components:
@@ -27,7 +26,10 @@ def draw_mode(mode_components):
 	for i in mode_components:
 		i.draw_components()
 
-def main_loop(win,fifo):
+
+argtab = [water1_temp_box.value,water2_temp_box.value]
+
+def main_loop(win):
 	#setup
 	frame_counter = 0
 	mode = 0
@@ -52,14 +54,17 @@ def main_loop(win,fifo):
 
 	mode_components[1].append(water1_temp_box)
 	#loop
+	global argtab
+	x = threading.Thread(target=read_can, args=(argtab,),daemon=True)
+	x.start()
 	while(True):
-		#for line in fifo:
-		#	if line.split(" ")[0]=="LVT":
-		#		lv_battery_temp_box.value = int(line.split(" ")[1])
 		try:
 			start_frame_time = time.time()
-			click = win.checkMouse()
-			if click is not None:
+
+			#unwrap can table
+			 water1_temp_box.value,water2_temp_box.value= argtab
+			#click = win.checkMouse()
+			#if click is not None:
 				mode = (mode + 1) % 2
 			if mode == 0 and current_mode != 0:
 				undraw_mode(mode_components[current_mode])
@@ -74,7 +79,7 @@ def main_loop(win,fifo):
 			
 			#testing values
 			frame_counter+=1
-			water1_temp_box.value = frame_counter
+			#water1_temp_box.value = frame_counter
 			#revs.revs_value = (frame_counter*2500)%10000
 			#revs.update_revs()
 			if frame_counter%20==1:
@@ -104,13 +109,5 @@ def main_loop(win,fifo):
 			raise
 			exit(0)
 
-if __name__=="__main__":
-	FIFO = "test_pipe"
-	try:
-		os.mkfifo(FIFO)
-	except OSError as oe: 
-		if oe.errno != errno.EEXIST:
-			raise
-	#with open(FIFO) as fifo:
-		
-	main_loop(win,FIFO)
+if __name__=="__main__":	
+	main_loop(win)
