@@ -6,19 +6,18 @@ from time import time as time
 
 from graphics import *
 from layout_rework import *
-
 from boxes import *
-
 from seven import *
+from vcan import*
 
 import os
 import errno
+import threading
+from copy import copy
 
 mode_components = []
 for i in range(3):
 	mode_components.append([])
-
-
 
 def undraw_mode(mode_components):
 	for i in mode_components:
@@ -26,6 +25,9 @@ def undraw_mode(mode_components):
 def draw_mode(mode_components):
 	for i in mode_components:
 		i.draw_components()
+
+
+argtab = [water1_temp_box.value,water2_temp_box.value]
 
 def main_loop(win):
 	#setup
@@ -46,18 +48,25 @@ def main_loop(win):
 	mode_components[current_mode].append(hv_battery_rms_box)
 	mode_components[current_mode].append(motor_temp_box)
 
-	test_num = number(220,77,72,win)
-	test_num2 = number(290,77,72,win)
+	test_num = number(180-10,68,72,win)
+	test_num2 = number(257-10,68,72,win)
 	flag = True
 
 	mode_components[1].append(water1_temp_box)
 	#loop
+	global argtab
+	x = threading.Thread(target=read_can, args=(argtab,),daemon=True)
+	x.start()
 	while(True):
 		try:
 			start_frame_time = time.time()
-			click = win.checkMouse()
-			if click is not None:
-				mode = (mode + 1) % 2
+
+			#unwrap can table
+			water1_temp_box.value = argtab[0]
+			water2_temp_box.value = argtab[1]
+			#click = win.checkMouse()
+			#if click is not None:
+			#mode = (mode + 1) % 2
 			if mode == 0 and current_mode != 0:
 				undraw_mode(mode_components[current_mode])
 				water1_temp_box.move_components(-100,-100)
@@ -71,7 +80,7 @@ def main_loop(win):
 			
 			#testing values
 			frame_counter+=1
-			water1_temp_box.value = frame_counter
+			#water1_temp_box.value = frame_counter
 			#revs.revs_value = (frame_counter*2500)%10000
 			#revs.update_revs()
 			if frame_counter%20==1:
@@ -96,9 +105,10 @@ def main_loop(win):
 			#if frame_time > max_frame_time:
 			#	print("OVERLOAD DETECTED! FRAMERATE IS TOO BIG!")
 			#sleep(max_frame_time-frame_time if max_frame_time-frame_time > 0 else 1e-8)
+			#input()
 		except GraphicsError as error:
 			raise
 			exit(0)
 
-if __name__=="__main__":
+if __name__=="__main__":	
 	main_loop(win)
