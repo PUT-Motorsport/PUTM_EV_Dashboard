@@ -27,8 +27,8 @@ def draw_mode(mode_components):
 		i.draw_components()
 
 
-argtab = (water1_temp_box.value,water2_temp_box.value,hv_battery_max_temp_box.value,
-		  hv_battery_avg_temp_box.value)
+argtab = [water1_temp_box.value,water2_temp_box.value,hv_battery_max_temp_box.value,
+		  hv_battery_avg_temp_box.value,esc_temp_box.value,motor_temp_box.value]
 
 def main_loop(win):
 	#setup
@@ -65,7 +65,13 @@ def main_loop(win):
 			#unwrap can table
 			#water1_temp_box.value = argtab[0]
 			#water2_temp_box.value = argtab[1]
-			water1_temp_box.value,water2_temp_box.value,hv_battery_max_temp_box.value,hv_battery_avg_temp_box.value= argtab
+			water1_temp_box.value = argtab[0]
+			water2_temp_box.value = argtab[1]
+			hv_battery_max_temp_box.value = argtab[2]
+			hv_battery_avg_temp_box.value = argtab[3]
+			esc_temp_box.value = argtab[4]
+			motor_temp_box.value = argtab[5]
+			
 			#click = win.checkMouse()
 			#if click is not None:
 			#mode = (mode + 1) % 2
