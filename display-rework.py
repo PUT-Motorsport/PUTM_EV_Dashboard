@@ -27,7 +27,7 @@ def draw_mode(mode_components):
 		i.draw_components()
 
 
-argtab = [water1_temp_box.value,water2_temp_box.value]
+argtab = (water1_temp_box.value,water2_temp_box.value,hv_battery_max_temp_box.value,hv_battery_avg_temp_box.value,esc_temp_box.value,motor_temp_box.value)
 
 def main_loop(win):
 	#setup
@@ -62,8 +62,7 @@ def main_loop(win):
 			start_frame_time = time.time()
 
 			#unwrap can table
-			water1_temp_box.value = argtab[0]
-			water2_temp_box.value = argtab[1]
+			water1_temp_box.value,water2_temp_box.value,hv_battery_max_temp_box.value,hv_battery_avg_temp_box.value,esc_temp_box.value,motor_temp_box.value = argtab
 			#click = win.checkMouse()
 			#if click is not None:
 			#mode = (mode + 1) % 2
@@ -105,7 +104,7 @@ def main_loop(win):
 			#if frame_time > max_frame_time:
 			#	print("OVERLOAD DETECTED! FRAMERATE IS TOO BIG!")
 			#sleep(max_frame_time-frame_time if max_frame_time-frame_time > 0 else 1e-8)
-			#input()
+			input()
 		except GraphicsError as error:
 			raise
 			exit(0)

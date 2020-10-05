@@ -320,7 +320,6 @@ water2_temp_box = temp_box(310,240,75,50,8,"WATER 2",win)
 water2_temp_box.draw_components()
 water2_temp_box.box.setOutline("white")
 water2_temp_box.max_safe_value = 100
-water2_temp_box.value = 0
 
 #LV Battery indicator box
 lv_battery_box = fill_box_h(10,150-80,75,50,8,"LV BATT",win)
@@ -333,7 +332,6 @@ lv_battery_temp_box = temp_box(10,150-20,75,50,8,"LV TEMP",win)
 lv_battery_temp_box.draw_components()
 lv_battery_temp_box.box.setOutline("white")
 lv_battery_temp_box.max_safe_value = 80
-lv_battery_temp_box.value = 0
 
 #HV battery indicator BIG BOX
 hv_battery_box = fill_box_h(10,185,460,50,8,"HV BATT CHARGE",win)
@@ -347,42 +345,37 @@ hv_battery_avg_temp_box = temp_box(395,210-60-20,75,50,8,"HV TEMP",win)
 hv_battery_avg_temp_box.draw_components()
 hv_battery_avg_temp_box.box.setOutline("white")
 hv_battery_avg_temp_box.max_safe_value = 80
-hv_battery_avg_temp_box.value = 0
 
 #HV MAX temp box
 hv_battery_max_temp_box = temp_box(240-75/2,240,75,50,8,"HV MAX",win)
 hv_battery_max_temp_box.draw_components()
 hv_battery_max_temp_box.box.setOutline("white")
 hv_battery_max_temp_box.max_safe_value = 80
-hv_battery_max_temp_box.value = 0
 
 #RMS kW
 hv_battery_rms_box = temp_box(10,240,75,50,8,"HV kW",win)
 hv_battery_rms_box.draw_components()
 hv_battery_rms_box.box.setOutline("white")
 hv_battery_rms_box.max_safe_value = 300
-hv_battery_rms_box.value = 0
 
 #ESC temp box
 esc_temp_box = temp_box(395,240,75,50,8,"ESC TEMP",win)
 esc_temp_box.draw_components()
 esc_temp_box.box.setOutline("white")
 esc_temp_box.max_safe_value = 80
-esc_temp_box.value = 0
 
 #MOTOR temp box
 motor_temp_box = temp_box(395,90-20,75,50,8,"MTR TEMP",win)
 motor_temp_box.draw_components()
 motor_temp_box.box.setOutline("white")
 motor_temp_box.max_safe_value = 80
-motor_temp_box.value = 0
 
 #Generic RED ALERT TEXT
 alert_text = Text(Point(240,310),"RUDA ZJADŁA PODŁOGE")
 alert_text.setTextColor(color_rgb(255,75,65))
 alert_text.setFace("helvetica")
 alert_text.setSize(16)
-alert_text.draw(win)
+#alert_text.draw(win)
 
 #Revs
 revs = rev()
