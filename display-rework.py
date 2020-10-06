@@ -27,9 +27,6 @@ def draw_mode(mode_components):
 		i.draw_components()
 
 
-argtab = [water1_temp_box.value,water2_temp_box.value,hv_battery_max_temp_box.value,
-		  hv_battery_avg_temp_box.value,esc_temp_box.value,motor_temp_box.value]
-
 def main_loop(win):
 	#setup
 	frame_counter = 0
@@ -49,32 +46,16 @@ def main_loop(win):
 	mode_components[current_mode].append(hv_battery_rms_box)
 	mode_components[current_mode].append(motor_temp_box)
 
-	test_num = number(180-10,68,72,win)
-	test_num2 = number(257-10,68,72,win)
+	#test_num = number(180-10,68,72,win)
+	#test_num2 = number(257-10,68,72,win)
 	flag = True
 
 	mode_components[1].append(water1_temp_box)
 	#loop
-	global argtab
-	x = threading.Thread(target=read_can, args=(argtab,),daemon=True)
+	x = threading.Thread(target=read_can, args=(),daemon=True)
 	x.start()
 	while(True):
 		try:
-			start_frame_time = time.time()
-
-			#unwrap can table
-			#water1_temp_box.value = argtab[0]
-			#water2_temp_box.value = argtab[1]
-			water1_temp_box.value = argtab[0]
-			water2_temp_box.value = argtab[1]
-			hv_battery_max_temp_box.value = argtab[2]
-			hv_battery_avg_temp_box.value = argtab[3]
-			esc_temp_box.value = argtab[4]
-			motor_temp_box.value = argtab[5]
-			
-			#click = win.checkMouse()
-			#if click is not None:
-			#mode = (mode + 1) % 2
 			if mode == 0 and current_mode != 0:
 				undraw_mode(mode_components[current_mode])
 				water1_temp_box.move_components(-100,-100)
@@ -86,34 +67,26 @@ def main_loop(win):
 				current_mode = 1
 				draw_mode(mode_components[current_mode])
 			
+			if alert.alert_carrier is not None:
+				if alert.alert_present==False:
+					alert.alert_text.setText(alert.alert_carrier)
+					alert.alert_present = True
+					alert.current_alerts.append(alert.alert_carrier)
+				elif alert.alert_carrier not in alert.current_alerts:
+					alert.alert_text.setText(alert.alert_text.getText()+";"+alert.alert_carrier)
+					alert.current_alerts.append(alert.alert_carrier)
 			#testing values
 			frame_counter+=1
-			#water1_temp_box.value = frame_counter
-			#revs.revs_value = (frame_counter*2500)%10000
-			#revs.update_revs()
-			if frame_counter%20==1:
-				flag = not flag
-				if not flag:
-					test_num.display_number(2)
-					test_num2.display_number(1)
-				else:
-					test_num.display_number(3)
-					test_num2.display_number(7)
-			#update all texts 
 			for i in mode_components[current_mode]:
 				if getattr(i,"update_filler",None):
-					i.update_filler(1000-frame_counter)
-					i.value_text.setText(str(round(i.value/i.top_value*100,2)))
+					#i.update_filler(1000-frame_counter)
+					if i.value is not None: i.update_filler()
+					#i.value_text.setText(str(round(i.value/i.top_value*100,2)))
 				i.color_picker()
 				if getattr(i,"check_warn",None):
 					i.check_warn()
 					i.value_text.setText(str(i.value))
-			#end_frame_time = time.time()
-			#frame_time = (end_frame_time-start_frame_time)
-			#if frame_time > max_frame_time:
-			#	print("OVERLOAD DETECTED! FRAMERATE IS TOO BIG!")
-			#sleep(max_frame_time-frame_time if max_frame_time-frame_time > 0 else 1e-8)
-			input()
+			#input()
 		except GraphicsError as error:
 			raise
 			exit(0)

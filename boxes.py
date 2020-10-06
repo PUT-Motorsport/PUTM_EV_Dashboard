@@ -174,7 +174,7 @@ class fill_box_h:
 		self.value = None
 		#self.filler = Rectangle(self.fill_left_point,self.fill_right_point)
 		self.fillers = []
-		for i in range(50):
+		for i in range(51):
 			#self.fillers.append(Rectangle(Point(self.left_point.getX(),self.y+(self.h/50)*i),Point(self.left_point.getX()+self.w,self.y+(self.h/50)*(i+1))))
 			self.fillers.append(Rectangle(Point(self.x+(self.w/50)*i,self.left_point.getY()),Point(self.x+(self.h/50)*(i+1),self.left_point.getY()+self.h)))
 			self.fillers[i].setFill("green")
@@ -187,6 +187,7 @@ class fill_box_h:
 		self.value_text.setSize(font_size+2)
 		self.value_text.setStyle("bold")
 		self.last_undrawn = None
+		self.last_value = 100
 	def draw_components(self):
 		#self.filler.draw(self.win)
 		self.box.draw(self.win)
@@ -207,11 +208,10 @@ class fill_box_h:
 		self.value_text.undraw()
 		self.text.draw(self.win)
 		self.value_text.draw(self.win)
-	def update_filler(self,x):
-		if self.value is None:
-			self.value = x
-		temp = (x/self.top_value)
-		delta = temp-(self.value/self.top_value)
+	def update_filler(self):
+		temp = self.value
+		delta = temp-self.last_value
+		self.value_text.setText(str(self.value/10))
 		#print(delta)
 		if delta <= -0.02:
 			#print("abs: ",floor(delta/(-0.02)))
@@ -225,7 +225,7 @@ class fill_box_h:
 					self.fillers[i].undraw()
 				self.last_undrawn = floor(delta/(-0.02))
 			#print("last: ", self.last_undrawn)
-			self.value = x
+			self.last_value = self.value
 		#px_delta = abs(self.filler.getP1().getY()-self.fill_left_point.getY() - (self.h*(1-self.value)))
 		#if px_delta >= 1:
 		#	self.filler.undraw()
@@ -293,7 +293,8 @@ class speed:
 		self.box = Rectangle(Point(x,y),Point(x+w,y+h))
 		self.box.setOutline("White")
 		self.value = speed_value
-		self.value_text = Text(Point(x+(w/2),y+(h/2+4)),str(self.value))
+		self.value_text = Text(Point(x+(w/2),y+(h/2)),str(self.value))
+		self.value_text.setTextColor("white")
 		self.win = win
 	def draw_components(self):
 		self.box.draw(self.win)
@@ -304,13 +305,24 @@ class speed:
 	def update_filler(self,x):
 		self.value = x 
 		self.value_text.setText(str(self.value))
+
+class alert_handler:
+	def __init__(self,x,y,font_size,speedo,win):
+		self.alert_present = False
+		self.x = x 
+		self.y = y
+		self.speedo = speedo
+		self.alert_text = Text(Point(x,y)," ")
+		self.alert_text.setTextColor(color_rgb(255,75,65))
+		self.alert_text.setFace("helvetica")
+		self.alert_text.setSize(font_size)
+		self.alert_carrier = None
+		self.current_alerts = []
 #global window declaration - don't know what to do with it honestly
 win = GraphWin("This is not a Raspberry, come on",screen_w,screen_h)
 
 # all the boxes. ALL OF THEM FOR ALL MODES ARE DECLARED AND INITED HERE 
 # (MOVE LIMITS TO limits.py for easy management by teammates)
-
-
 
 #water1 temp box
 water1_temp_box = temp_box(95,240,75,50,8,"WATER 1",win)
@@ -328,7 +340,7 @@ water2_temp_box.max_safe_value = 100
 lv_battery_box = fill_box_h(10,150-80,75,50,8,"LV BATT",win)
 lv_battery_box.draw_components()
 lv_battery_box.box.setOutline("white")
-lv_battery_box.top_value = 1000
+#lv_battery_box.top_value = 1000
 
 #LV Battery temp box
 lv_battery_temp_box = temp_box(10,150-20,75,50,8,"LV TEMP",win)
@@ -341,7 +353,7 @@ hv_battery_box = fill_box_h(10,185,460,50,8,"HV BATT CHARGE",win)
 hv_battery_box.draw_components()
 #hv_battery_box.text = Text(Point(hv_battery_box.x+hv_battery_box.w/2-100,hv_battery_box.y+15),hv_battery_box.text_str)
 hv_battery_box.box.setOutline("white")
-hv_battery_box.top_value = 1000
+#hv_battery_box.top_value = 1000
 
 #HV AVG temp box
 hv_battery_avg_temp_box = temp_box(395,210-60-20,75,50,8,"HV TEMP",win)
@@ -376,19 +388,16 @@ motor_temp_box.draw_components()
 motor_temp_box.box.setOutline("white")
 motor_temp_box.max_safe_value = 80
 
-
-#Generic RED ALERT TEXT
-alert_text = Text(Point(240,310),"RUDA ZJADŁA PODŁOGE")
-alert_text.setTextColor(color_rgb(255,75,65))
-alert_text.setFace("helvetica")
-alert_text.setSize(16)
-#alert_text.draw(win)
-
 #Revs
 revs = rev()
 
 #speed
-speedo = speed(240-(300/2),65,300,135-20,300,win)
-speedo.value_text.setFill("black")
-speedo.value_text.setSize(35)
+speedo = speed(240-(300/2),65,300,135-20,0,win)
+speedo.value_text.setFill("white")
+speedo.value_text.setSize(100)
 speedo.draw_components()
+
+
+#Generic RED ALERT TEXT and SPPEDO ALERT HANDLER
+alert = alert_handler(240,305,16,speedo,win)
+alert.alert_text.draw(win)
