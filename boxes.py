@@ -215,15 +215,18 @@ class fill_box_h:
 		#print(delta)
 		if delta <= -0.02:
 			#print("abs: ",floor(delta/(-0.02)))
-			i=0
-			if self.last_undrawn is not None:
-				for i in range(floor(delta/(-0.02))):
-					self.fillers[self.last_undrawn+i].undraw()
-				self.last_undrawn += floor(delta/(-0.02))
-			else:
-				for i in range(floor(delta/(-0.02))):
-					self.fillers[i].undraw()
-				self.last_undrawn = floor(delta/(-0.02))
+			try:
+				i=0
+				if self.last_undrawn is not None:
+					for i in range(floor(delta/(-0.02))):
+						self.fillers[self.last_undrawn+i].undraw()
+					self.last_undrawn += floor(delta/(-0.02))
+				else:
+					for i in range(floor(delta/(-0.02))):
+						self.fillers[i].undraw()
+					self.last_undrawn = floor(delta/(-0.02))
+			except IndexError as error:
+				pass
 			#print("last: ", self.last_undrawn)
 			self.last_value = self.value
 		#px_delta = abs(self.filler.getP1().getY()-self.fill_left_point.getY() - (self.h*(1-self.value)))
@@ -296,19 +299,23 @@ class speed:
 		self.value_text = Text(Point(x+(w/2),y+(h/2)),str(self.value))
 		self.value_text.setTextColor("white")
 		self.win = win
+		self.x = x 
+		self.y = y
+		self.w = w
+		self.h = h  
 	def draw_components(self):
 		self.box.draw(self.win)
 		self.value_text.draw(self.win)
 	def undraw_components(self):
 		self.box.undraw()
 		self.value_text.undraw()
-	def update_filler(self,x):
-		self.value = x 
-		self.value_text.setText(str(self.value))
+	def id_speed():
+		pass
 
 class alert_handler:
 	def __init__(self,x,y,font_size,speedo,win):
 		self.alert_present = False
+		self.alert_hv = False
 		self.x = x 
 		self.y = y
 		self.speedo = speedo
@@ -320,12 +327,12 @@ class alert_handler:
 		self.current_alerts = []
 #global window declaration - don't know what to do with it honestly
 win = GraphWin("This is not a Raspberry, come on",screen_w,screen_h)
-
+backdrop = Image(Point(240,160),"/home/pi/PUTM_EV_Dashboard/logo_b.png")
 # all the boxes. ALL OF THEM FOR ALL MODES ARE DECLARED AND INITED HERE 
 # (MOVE LIMITS TO limits.py for easy management by teammates)
 
 #water1 temp box
-water1_temp_box = temp_box(95,240,75,50,8,"WATER 1",win)
+water1_temp_box = temp_box(95,240,75,50,8,"APPS",win)
 water1_temp_box.draw_components()
 water1_temp_box.box.setOutline("white")
 water1_temp_box.max_safe_value = 100
@@ -337,7 +344,7 @@ water2_temp_box.box.setOutline("white")
 water2_temp_box.max_safe_value = 100
 
 #LV Battery indicator box
-lv_battery_box = fill_box_h(10,150-80,75,50,8,"LV BATT",win)
+lv_battery_box = fill_box_h(10,150-85,75,50,8,"LV BATT",win)
 lv_battery_box.draw_components()
 lv_battery_box.box.setOutline("white")
 #lv_battery_box.top_value = 1000
@@ -383,7 +390,7 @@ esc_temp_box.max_safe_value = 80
 
 
 #MOTOR temp box
-motor_temp_box = temp_box(395,90-20,75,50,8,"MTR TEMP",win)
+motor_temp_box = temp_box(395,90-25,75,50,8,"MTR TEMP",win)
 motor_temp_box.draw_components()
 motor_temp_box.box.setOutline("white")
 motor_temp_box.max_safe_value = 80
@@ -401,3 +408,7 @@ speedo.draw_components()
 #Generic RED ALERT TEXT and SPPEDO ALERT HANDLER
 alert = alert_handler(240,305,16,speedo,win)
 alert.alert_text.draw(win)
+
+
+
+backdrop.draw(win)
