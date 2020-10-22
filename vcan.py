@@ -34,7 +34,7 @@ def read_can():
                 hv_battery_avg_temp_box.value = int(hex_str[12]+hex_str[13],16)
                 hv_battery_box.value = int(hex_str[10:12]+hex_str[8:10],16)
                 #speedo.value = int(((int(hex_str[0:4],16)*speed_factor*3.141592*0.52)/60)*3.6)
-                print(speedo.value)
+                #print(speedo.value)
                 alert_test = int(hex_str[6:8],16)
                 if alert_test != 0:
                     alert.alert_carrier = "HV ERROR\n"+"0x"+hex_str[6:8].upper()
@@ -66,6 +66,7 @@ def read_can():
                 lv_voltage = int(hex_str[0:2],16)/10
                 lv_battery_box.value = round(((lv_voltage-14)/2.8)*100,1)
                 #print(lv_voltage,lv_battery_box.value)
+                lv_battery_temp_box.value = int(hex_str[4:6],16)
                 alert_test = int(hex_str[2:4],16)
                 if alert_test != 0:
                     alert.alert_carrier = "LV ERROR "+"0x"+hex_str[2:4].upper()
