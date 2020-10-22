@@ -211,20 +211,20 @@ class fill_box_h:
 	def update_filler(self):
 		temp = self.value
 		delta = temp-self.last_value
-		self.value_text.setText(str(self.value/10))
+		self.value_text.setText(str(self.value))
 		#print(delta)
-		if delta <= -0.02:
+		if delta <= -2:
 			#print("abs: ",floor(delta/(-0.02)))
 			try:
 				i=0
 				if self.last_undrawn is not None:
-					for i in range(floor(delta/(-0.02))):
+					for i in range(floor(delta/(-2))):
 						self.fillers[self.last_undrawn+i].undraw()
-					self.last_undrawn += floor(delta/(-0.02))
+					self.last_undrawn += floor(delta/(-2))
 				else:
-					for i in range(floor(delta/(-0.02))):
+					for i in range(floor(delta/(-2))):
 						self.fillers[i].undraw()
-					self.last_undrawn = floor(delta/(-0.02))
+					self.last_undrawn = floor(delta/(-2))
 			except IndexError as error:
 				pass
 			#print("last: ", self.last_undrawn)
@@ -327,12 +327,12 @@ class alert_handler:
 		self.current_alerts = []
 #global window declaration - don't know what to do with it honestly
 win = GraphWin("This is not a Raspberry, come on",screen_w,screen_h)
-backdrop = Image(Point(240,160),"/home/pi/PUTM_EV_Dashboard/logo_b.png")
+#backdrop = Image(Point(240,160),"/home/pi/PUTM_EV_Dashboard/logo_b.png")
 # all the boxes. ALL OF THEM FOR ALL MODES ARE DECLARED AND INITED HERE 
 # (MOVE LIMITS TO limits.py for easy management by teammates)
 
 #water1 temp box
-water1_temp_box = temp_box(95,240,75,50,8,"APPS",win)
+water1_temp_box = temp_box(95,240,75,50,8,"WATER 1",win)
 water1_temp_box.draw_components()
 water1_temp_box.box.setOutline("white")
 water1_temp_box.max_safe_value = 100
@@ -411,4 +411,4 @@ alert.alert_text.draw(win)
 
 
 
-backdrop.draw(win)
+#backdrop.draw(win)

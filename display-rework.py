@@ -10,7 +10,7 @@ from layout_rework import *
 #from seven import *
 from vcan import*
 
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 #import os
 #import errno
@@ -34,13 +34,13 @@ def main_loop(win):
 	frame_counter = 0
 	mode = 0
 	current_mode = 0
-	backdrop.undraw()
+	#backdrop.undraw()
 	win.setBackground("black")
 	#max_frame_time = (1/framerate)
 	change_flag = True
 
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(26,GPIO.IN,pull_up_down=GPIO.PUD_UP)
+	#GPIO.setmode(GPIO.BCM)
+	#GPIO.setup(26,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 
 	mode_components[current_mode].append(water1_temp_box)
 	mode_components[current_mode].append(water2_temp_box)

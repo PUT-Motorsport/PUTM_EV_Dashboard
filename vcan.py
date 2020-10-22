@@ -49,7 +49,7 @@ def read_can():
                 #dump.hv_temp_avg = int(hex_str[12:14],16)
                 #dump.hv_temp_max = int(hex_str[14:16],16)
             elif message.arbitration_id == 0x00e:
-                speedo.value = int((((hex_str[2:4]+hex_str[0:2],16)*speed_factor*3.141592*0.52)/60)*3.6)
+                speedo.value = int(((int(hex_str[2:4]+hex_str[0:2],16)*speed_factor*3.141592*0.52)/60)*3.6)
                 esc_temp_box.value = int(hex_str[14]+hex_str[15],16)
                 motor_temp_box.value = int(hex_str[12]+hex_str[13],16)
                 #dump.motor_rpm = int(hex_str[0:4],16)
@@ -64,7 +64,7 @@ def read_can():
                     print(str(time.asctime())+"    "+alert.alert_carrier+"\ncan frame:\n"+str(message.arbitration_id)+": "+hex_str,file=file)
             elif message.arbitration_id == 0x00b:
                 lv_voltage = int(hex_str[0:2],16)/10
-                lv_battery_box.value = ((lv_voltage-14)/2.8)*100
+                lv_battery_box.value = round(((lv_voltage-14)/2.8)*100,1)
                 #print(lv_voltage,lv_battery_box.value)
                 alert_test = int(hex_str[2:4],16)
                 if alert_test != 0:
@@ -78,7 +78,8 @@ def read_can():
                 #dump.lv_voltage_low = int(hex_str[8:10],16)
                 #dump.lv_voltage_high = int(hex_str[10:12],16)
             elif message.arbitration_id == 0x00a:
-                water1_temp_box.value = int(hex_str[0:2],16)
+                pass
+                #water1_temp_box.value = int(hex_str[0:2],16)
                 #dump.apps = int(hex_str[0:2],16)
             elif message.arbitration_id == 0x05a:
                 pass
