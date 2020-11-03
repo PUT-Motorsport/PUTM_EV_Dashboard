@@ -111,10 +111,16 @@ def main_loop(win):
 					#i.value_text.setText(str(round(i.value/i.top_value*100,2)))
 				#i.color_picker()
 				if getattr(i,"check_warn",None):
+					#if i==lv_battery_box:
+				#		i.value_text.setText(i.secret_value)
+				#	else:
 					i.check_warn()
 					i.value_text.setText(str(i.value))
 				if getattr(i,"id_speed",None):
-					speedo.value_text.setText(str(speedo.value))
+					if i.value == 666:
+						speedo.value_text.setText("-")
+					else:
+						speedo.value_text.setText(str(speedo.value))
 			#input()
 			if mode == 1:
 				dump.update()

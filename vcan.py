@@ -7,7 +7,7 @@ import time
 
 
 bustype = 'socketcan'
-channel = 'can0'
+channel = 'vcan0'
 bus = can.interface.Bus(channel=channel, bustype=bustype)
 #constants:
 speed_factor = 11/53
@@ -64,9 +64,11 @@ def read_can():
                     print(str(time.asctime())+"    "+alert.alert_carrier+"\ncan frame:\n"+str(message.arbitration_id)+": "+hex_str,file=file)
             elif message.arbitration_id == 0x00b:
                 lv_voltage = int(hex_str[0:2],16)/10
-                lv_battery_box.value = round(((lv_voltage-14)/2.8)*100,1)
+                lv_battery_box.secret_value = round(((lv_voltage-14)/2.8)*100,1)
+                #print(lv_battery_box.secret_value)
+                lv_battery_box.value = lv_voltage
                 #print(lv_voltage,lv_battery_box.value)
-                lv_battery_temp_box.value = int(hex_str[4:6],16)
+                lv_battery_temp_box.value = int(hex_str[6:8],16)
                 alert_test = int(hex_str[2:4],16)
                 if alert_test != 0:
                     alert.alert_carrier = "LV ERROR "+"0x"+hex_str[2:4].upper()

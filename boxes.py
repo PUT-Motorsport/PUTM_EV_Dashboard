@@ -20,6 +20,7 @@ class temp_box:
 		self.box.setOutline("white")
 		self.box.setWidth(1)
 		self.win = win
+		self.secret_value = None
 		self.value = None
 		self.max_safe_value = None
 		self.value_text = Text(Point(x+w/2,y+h-15),self.value)
@@ -172,6 +173,7 @@ class fill_box_h:
 		self.win = win
 		self.top_value = None
 		self.value = None
+		self.secret_value = None
 		#self.filler = Rectangle(self.fill_left_point,self.fill_right_point)
 		self.fillers = []
 		for i in range(51):
@@ -209,7 +211,10 @@ class fill_box_h:
 		self.text.draw(self.win)
 		self.value_text.draw(self.win)
 	def update_filler(self):
-		temp = self.value
+		if self.secret_value is None:
+			temp = self.value
+		else:
+			temp = self.secret_value
 		delta = temp-self.last_value
 		self.value_text.setText(str(self.value))
 		#print(delta)
@@ -228,7 +233,7 @@ class fill_box_h:
 			except IndexError as error:
 				pass
 			#print("last: ", self.last_undrawn)
-			self.last_value = self.value
+			self.last_value = temp
 		#px_delta = abs(self.filler.getP1().getY()-self.fill_left_point.getY() - (self.h*(1-self.value)))
 		#if px_delta >= 1:
 		#	self.filler.undraw()
@@ -350,7 +355,7 @@ lv_battery_box.box.setOutline("white")
 #lv_battery_box.top_value = 1000
 
 #LV Battery temp box
-lv_battery_temp_box = temp_box(10,150-20,75,50,8,"LV TEMP",win)
+lv_battery_temp_box = temp_box(10,150-20,75,50,8,"LV MAX TEMP",win)
 lv_battery_temp_box.draw_components()
 lv_battery_temp_box.box.setOutline("white")
 lv_battery_temp_box.max_safe_value = 80
