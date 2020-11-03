@@ -7,7 +7,7 @@ import time
 
 
 bustype = 'socketcan'
-channel = 'vcan0'
+channel = 'can0'
 bus = can.interface.Bus(channel=channel, bustype=bustype)
 #constants:
 speed_factor = 11/53
